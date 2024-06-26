@@ -59,9 +59,12 @@ func GetFile(ctx *context.Context, resp http.ResponseWriter, req *http.Request) 
 		file.Type = "text/plain"
 	}
 
-	// Force the download of the following types as they are blocked by the CSP Header and won't display properly.
-	if file.Type == "" || strings.Contains(file.Type, "flash") || strings.Contains(file.Type, "pdf") {
-		file.Type = "application/octet-stream"
+	// Specific handling for MP3 files to ensure correct MIME type
+	if strings.HasSuffix(file.Name, ".mp3") {
+	    file.Type = "audio/mpeg"
+	} else if file.Type == "" || strings.Contains(file.Type, "flash") || strings.Contains(file.Type, "pdf") {
+	    // Force the download of the following types as they are blocked by the CSP Header and won't display properly.
+	    file.Type = "application/octet-stream"
 	}
 
 	// Set content type and print file
